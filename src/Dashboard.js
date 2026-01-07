@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -84,6 +86,31 @@ export default function Dashboard() {
     URL.revokeObjectURL(url);
   };
 
+  // Export PDF (mesures + tickets)
+  const exportPDF = (mesures, ticketsList) => {
+    const doc = new jsPDF();
+    doc.text("Audit Cold Chain Monitoring", 14, 20);
+
+    // Mesures
+    doc.text("Historique des mesures", 14, 30);
+    doc.autoTable({
+      startY: 35,
+      head: [["ID", "Capteur", "Température (°C)", "Humidité (%)", "Date"]],
+      body: mesures.map(m => [m.id, m.sensor_name, m.temperature, m.humidity, m.created_at])
+    });
+
+    // Tickets
+    doc.addPage();
+    doc.text("Tickets", 14, 20);
+    doc.autoTable({
+      startY: 25,
+      head: [["ID", "Capteur", "Description", "Statut", "Date"]],
+      body: ticketsList.map(t => [t.id, t.sensor || t.sensor_name || "", t.description, t.status, t.created_at])
+    });
+
+    doc.save("audit_coldchain.pdf");
+  };
+
   // Fonction pour mettre à jour le statut des tickets
  const updateTicketStatus = async (ticketId, newStatus) => {
   try {
@@ -135,7 +162,10 @@ export default function Dashboard() {
       <div style={{ marginBottom: "30px", padding: "20px", background: "#f8f9fa", borderRadius: "8px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
           <h2>Mesures</h2>
-          <button onClick={exportCSV} style={{ padding: "5px 15px", background: "green", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>Export CSV</button>
+          <div>
+            <button onClick={exportCSV} style={{ padding: "5px 15px", marginRight: "8px", background: "green", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>Export CSV</button>
+            <button onClick={() => exportPDF(measurements, tickets)} style={{ padding: "5px 15px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>Exporter PDF</button>
+          </div>
         </div>
         <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center" }}>
           <thead style={{ background: "#dee2e6" }}>
