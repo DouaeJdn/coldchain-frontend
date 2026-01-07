@@ -1,8 +1,0 @@
-# Netlify configuration: use Create React App default output folder (build)
-[build]
-  command = "npm run build"
-  publish = "build"
-
-# Optional: set node version if needed by your environment
-#[context.production.environment]
-#  NODE_VERSION = "18"

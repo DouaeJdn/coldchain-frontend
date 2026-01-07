@@ -10,14 +10,14 @@ export default function Tickets() {
   }, []);
 
   const fetchTickets = async () => {
-    const res = await axios.get("http://127.0.0.1:8000/api/tickets/");
+    const res = await axios.get("https://doujaadan.pythonanywhere.com/api/tickets/");
     setTickets(res.data);
   };
 
   const updateStatus = async (ticketId, status) => {
     try {
       await axios.patch(
-        `http://127.0.0.1:8000/api/tickets/${ticketId}/update-status/`,
+        `https://doujaadan.pythonanywhere.com/api/tickets/${ticketId}/update-status/`,
         { status }
       );
       fetchTickets();
