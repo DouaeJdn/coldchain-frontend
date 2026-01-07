@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -93,7 +93,7 @@ export default function Dashboard() {
 
     // Mesures
     doc.text("Historique des mesures", 14, 30);
-    doc.autoTable({
+    autoTable(doc, {
       startY: 35,
       head: [["ID", "Capteur", "Température (°C)", "Humidité (%)", "Date"]],
       body: mesures.map(m => [m.id, m.sensor_name, m.temperature, m.humidity, m.created_at])
@@ -102,7 +102,7 @@ export default function Dashboard() {
     // Tickets
     doc.addPage();
     doc.text("Tickets", 14, 20);
-    doc.autoTable({
+    autoTable(doc, {
       startY: 25,
       head: [["ID", "Capteur", "Description", "Statut", "Date"]],
       body: ticketsList.map(t => [t.id, t.sensor || t.sensor_name || "", t.description, t.status, t.created_at])
